@@ -1,23 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
-         version="5.0"
-         metadata-complete="false">
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
-    <display-name>Welcome to Tomcat</display-name>
-    <description>Welcome to Tomcat</description>
+    <http auto-config="true">
+        <intercept-url pattern="/" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/welcome" access="hasRole('ROLE_USER')" />
+        <form-login login-page="/login" default-target-url="/welcome"
+            authentication-failure-url="/login?error"
+            username-parameter="username" password-parameter="password" />
+        <logout logout-success-url="/login?logout" />
+        <csrf disabled="true" />
+    </http>
 
-    <!-- Spring Security filter configuration -->
-    <filter>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider user-service-ref="userDetailsServiceImpl">
+            <!-- Reference the BCryptPasswordEncoder bean using password-encoder attribute -->
+            <password-encoder ref="encoder" />
+        </authentication-provider>
+    </authentication-manager>
 
-    <!-- Other servlet configurations -->
+    <!-- Define the BCryptPasswordEncoder bean outside of authentication-provider -->
+    <beans:bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+        <beans:constructor-arg name="strength" value="11" />
+    </beans:bean>
 
-</web-app>
+    <beans:bean id="userDetailsServiceImpl" class="com.visualpathit.account.service.UserDetailsServiceImpl" />
+
+</beans:beans>
