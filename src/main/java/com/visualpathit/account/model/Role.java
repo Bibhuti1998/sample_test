@@ -8,14 +8,15 @@ import java.util.Set;
 @Table(name = "role")
 public class Role {
 	/** the id field !*/
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     /** the name field !*/
     private String name;
     /** the user field !*/
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles",cascade = CascadeType.ALL)
     private Set<User> users;
     /** {@inheritDoc}} !*/
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     /**
      * {@link Role#id}
      !*/
@@ -39,7 +40,7 @@ public class Role {
     /**
      * {@inheritDoc}} 
      !*/
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles",cascade = CascadeType.ALL)
+
     /**
      * {@link Role#id}
      !*/

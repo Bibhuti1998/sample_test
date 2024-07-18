@@ -10,6 +10,8 @@ import java.util.Set;
 @Table(name = "user")
 public class User implements Serializable {
 	/** the id field !*/
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     /** the user name field !*/
     private String username;
@@ -41,10 +43,11 @@ public class User implements Serializable {
     
     
     /** the roles field !*/
+    @ManyToMany
+    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
     /** {@inheritDoc}} !*/
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
     /** {@link User#id} */
     public Long getId() {
         return id;
@@ -99,8 +102,7 @@ public class User implements Serializable {
         this.passwordConfirm = passwordConfirm;
     }
     /** {@inheritDoc}} !*/
-    @ManyToMany
-    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+   
     public Set<Role> getRoles() {
         return roles;
     }
